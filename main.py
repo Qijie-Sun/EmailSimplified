@@ -76,7 +76,7 @@ def parse(imap, id):
     print(clean_text)
 
 
-email = 'qjasonsun@gmail.com'
+email = input('Enter email: ')
 password = getpass.getpass('Enter app password: ')
 
 imap = login(email, password)
