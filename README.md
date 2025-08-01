@@ -1,3 +1,4 @@
 # EmailSimplified
 This project is currently in early development.
-It intends to create a simplified version of Gmail showing more consice content and group similar emails together.
+
+This program creates a simplified version of Gmail that shows more concise content and groups similar emails together.
