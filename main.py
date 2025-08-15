@@ -2,48 +2,23 @@ import imaplib
 import getpass
 import mailparser
 from lxml import html
+import streamlit as st
 
 def login(email, password):
     imap = imaplib.IMAP4_SSL('imap.gmail.com')
     try:
         imap.login(email, password)
     except imaplib.IMAP4.error:
-        print('Login failed. Please check your credentials.')
+        st.error('Login failed. Please check your credentials.')
         exit()
     return imap
-
-def select():
-    options = {
-        '1': '',
-        '2': 'primary',
-        '3': 'promotions',
-        '4': 'social',
-        '5': 'updates',
-        '6': 'exit'
-    }
-
-    print('Select Gmail category:')
-    for k, v in options.items():
-        option = k + ': '
-        if v:
-            option += v.capitalize()
-        else:
-            option += 'All'
-        print(option)
-
-    while True:
-        choice = input('Enter choice (1-6): ').strip()
-        if choice in options:
-            return options[choice]
-        print('Invalid choice.')
 
 def fetch_emails(imap, category, limit):
     imap.select('inbox')
     status, messages = imap.search(None, 'X-GM-RAW', 'category:' + category)
     if status != 'OK':
-        print('Failed to retrieve emails.')
-        exit()
-
+        st.error('Failed to retrieve emails.')
+        return []
     email_ids = messages[0].split()
     return email_ids[-limit:]
 
@@ -60,11 +35,6 @@ def parse(imap, id):
     raw_email = msg_data[0][1]
     parsed = mailparser.parse_from_bytes(raw_email)
 
-    print('=' * 50)
-    print(f'From: {parsed.from_}')
-    print(f'Subject: {parsed.subject}')
-    print(f'Date: {parsed.date}')
-
     if parsed.text_plain:
         clean_text = '\n'.join(parsed.text_plain)
     elif parsed.text_html:
@@ -73,22 +43,46 @@ def parse(imap, id):
     else:
         clean_text = '[No readable content found]'
 
-    print(clean_text)
+    return {
+        'From': parsed.from_,
+        'Subject': parsed.subject,
+        'Date': parsed.date,
+        'Content': clean_text
+    }
 
+# streamlit run main.py
+st.title("Gmail Reader")
 
-email = input('Enter email: ')
-password = getpass.getpass('Enter app password: ')
+email = st.text_input("Enter your Gmail address")
+password = st.text_input("Enter app password", type="password")
 
-imap = login(email, password)
+category_options = {
+    "All": "",
+    "Primary": "primary",
+    "Promotions": "promotions",
+    "Social": "social",
+    "Updates": "updates"
+}
 
-category = select()
-if category == 'exit':
-    print('Exiting...')
-    imap.logout()
-    exit()
-    
-email_ids = fetch_emails(imap, category, 3)
-for id in reversed(email_ids):
-    parse(imap, id)
+category = st.selectbox("Select Gmail category", list(category_options.keys()))
+num_emails = st.slider("Number of emails to fetch", min_value=1, max_value=10, value=3)
 
-imap.logout()
+if st.button("Fetch Emails"):
+    if not email or not password:
+        st.warning("Please enter both email and app password.")
+    else:
+        imap = login(email, password)
+        if imap:
+            email_ids = fetch_emails(imap, category_options[category], num_emails)
+            if email_ids:
+                st.success(f"Fetched {len(email_ids)} emails.")
+                for id in reversed(email_ids):
+                    parsed_email = parse(imap, id)
+                    st.markdown("---")
+                    st.write(f"**From:** {parsed_email['From']}")
+                    st.write(f"**Subject:** {parsed_email['Subject']}")
+                    st.write(f"**Date:** {parsed_email['Date']}")
+                    st.text(parsed_email['Content'])
+            else:
+                st.info("No emails found.")
+            imap.logout()
