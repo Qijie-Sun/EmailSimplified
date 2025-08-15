@@ -4,6 +4,18 @@ import mailparser
 from lxml import html
 import streamlit as st
 
+# Hide "Press Enter to apply" text on inputs
+st.markdown(
+    """
+    <style>
+    div[data-testid="InputInstructions"] > span:nth-child(1) {
+        visibility: hidden;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 def login(email, password):
     imap = imaplib.IMAP4_SSL('imap.gmail.com')
     try:
