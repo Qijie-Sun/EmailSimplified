@@ -95,7 +95,7 @@ def main():
                         st.write(f"**From:** {parsed_email['From']}")
                         st.write(f"**Subject:** {parsed_email['Subject']}")
                         st.write(f"**Date:** {parsed_email['Date']}")
-                        st.text(parsed_email['Content'])
+                        st.markdown(parsed_email['Content'])
                 else:
                     st.info("No emails found.")
                 imap.logout()
