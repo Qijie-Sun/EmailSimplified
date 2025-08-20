@@ -76,6 +76,7 @@ def main():
         st.session_state.password = st.text_input("Enter app password", type="password")
         if st.button("Login"):
             st.session_state.imap = login(st.session_state.email, st.session_state.password)
+            st.rerun()
     else:
         category_options = {
             "All": "",
