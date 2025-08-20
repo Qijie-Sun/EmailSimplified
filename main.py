@@ -72,8 +72,8 @@ def main():
         st.session_state.password = ""
 
     if not st.session_state.imap:
-        st.session_state.email = st.text_input("Enter your Gmail address", value=st.session_state.email)
-        st.session_state.password = st.text_input("Enter your app password", type="password")
+        st.session_state.email = st.text_input("Enter Gmail address", value=st.session_state.email)
+        st.session_state.password = st.text_input("Enter app password", type="password")
         if st.button("Login"):
             st.session_state.imap = login(st.session_state.email, st.session_state.password)
     else:
