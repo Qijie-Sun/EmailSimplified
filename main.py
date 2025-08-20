@@ -66,39 +66,41 @@ def parse(imap, id):
 def main():
     st.title("Gmail Reader")
 
-    email = st.text_input("Enter your Gmail address")
-    password = st.text_input("Enter app password", type="password")
+    if "imap" not in st.session_state:
+        st.session_state.imap = None
+        st.session_state.email = ""
+        st.session_state.password = ""
 
-    category_options = {
-        "All": "",
-        "Primary": "primary",
-        "Promotions": "promotions",
-        "Social": "social",
-        "Updates": "updates"
-    }
+    if not st.session_state.imap:
+        st.session_state.email = st.text_input("Enter your Gmail address", value=st.session_state.email)
+        st.session_state.password = st.text_input("Enter your app password", type="password")
+        if st.button("Login"):
+            st.session_state.imap = login(st.session_state.email, st.session_state.password)
+    else:
+        category_options = {
+            "All": "",
+            "Primary": "primary",
+            "Promotions": "promotions",
+            "Social": "social",
+            "Updates": "updates"
+        }
 
-    category = st.selectbox("Select Gmail category", list(category_options.keys()))
-    num_emails = st.slider("Number of emails to fetch", min_value=1, max_value=10, value=3)
+        category = st.selectbox("Select Gmail category", list(category_options.keys()))
+        num_emails = st.slider("Number of emails to fetch", min_value=1, max_value=10, value=3)
 
-    if st.button("Fetch Emails"):
-        if not email or not password:
-            st.warning("Please enter both email and app password.")
-        else:
-            imap = login(email, password)
-            if imap:
-                email_ids = fetch_emails(imap, category_options[category], num_emails)
-                if email_ids:
-                    st.success(f"Fetched {len(email_ids)} emails.")
-                    for id in reversed(email_ids):
-                        parsed_email = parse(imap, id)
-                        st.markdown("---")
-                        st.write(f"**From:** {parsed_email['From']}")
-                        st.write(f"**Subject:** {parsed_email['Subject']}")
-                        st.write(f"**Date:** {parsed_email['Date']}")
-                        st.markdown(parsed_email['Content'])
-                else:
-                    st.info("No emails found.")
-                imap.logout()
+        if st.button("Fetch Emails"):
+            email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
+            if email_ids:
+                st.success(f"Fetched {len(email_ids)} emails.")
+                for id in reversed(email_ids):
+                    parsed_email = parse(st.session_state.imap, id)
+                    st.markdown("---")
+                    st.write(f"**From:** {parsed_email['From']}")
+                    st.write(f"**Subject:** {parsed_email['Subject']}")
+                    st.write(f"**Date:** {parsed_email['Date']}")
+                    st.markdown(parsed_email['Content'])
+            else:
+                st.info("No emails found.")
 
 if __name__ == "__main__":
     main()
