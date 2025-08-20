@@ -71,6 +71,7 @@ def main():
         st.session_state.email = ""
         st.session_state.password = ""
 
+    # add error catching for login (invalid password or not entered)
     if not st.session_state.imap:
         st.session_state.email = st.text_input("Enter Gmail address", value=st.session_state.email)
         st.session_state.password = st.text_input("Enter app password", type="password")
