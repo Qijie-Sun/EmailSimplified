@@ -78,6 +78,10 @@ def main():
             st.session_state.imap = login(st.session_state.email, st.session_state.password)
             st.rerun()
     else:
+        if st.button('Logout'):
+            st.session_state.imap = None
+            st.rerun()
+
         category_options = {
             "All": "",
             "Primary": "primary",
