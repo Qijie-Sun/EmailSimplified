@@ -100,7 +100,12 @@ def main():
                 st.success(f"Fetched {len(email_ids)} emails.")
                 for id in reversed(email_ids):
                     parsed_email = parse(st.session_state.imap, id)
-                    with st.expander(f"{parsed_email['Subject']} - {parsed_email['From']}"):
+                    
+                    sender = parsed_email['From']
+                    if isinstance(sender, list) and sender:
+                        sender = sender[0][0] or sender[0][1]
+
+                    with st.expander(f"{parsed_email['Subject']} - {sender}"):
                         st.write(f"**From:** {parsed_email['From']}")
                         st.write(f"**Subject:** {parsed_email['Subject']}")
                         st.write(f"**Date:** {parsed_email['Date']}")
