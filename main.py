@@ -100,11 +100,11 @@ def main():
                 st.success(f"Fetched {len(email_ids)} emails.")
                 for id in reversed(email_ids):
                     parsed_email = parse(st.session_state.imap, id)
-                    st.markdown("---")
-                    st.write(f"**From:** {parsed_email['From']}")
-                    st.write(f"**Subject:** {parsed_email['Subject']}")
-                    st.write(f"**Date:** {parsed_email['Date']}")
-                    st.markdown(parsed_email['Content'])
+                    with st.expander(f"{parsed_email['Subject']} - {parsed_email['From']}"):
+                        st.write(f"**From:** {parsed_email['From']}")
+                        st.write(f"**Subject:** {parsed_email['Subject']}")
+                        st.write(f"**Date:** {parsed_email['Date']}")
+                        st.markdown(parsed_email['Content'])
             else:
                 st.info("No emails found.")
 
