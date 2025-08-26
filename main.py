@@ -105,7 +105,11 @@ def main():
                     if isinstance(sender, list) and sender:
                         sender = sender[0][0] or sender[0][1]
 
-                    with st.expander(f"{parsed_email['Subject']} - {sender}"):
+                    date = str(parsed_email['Date']).split()[0]
+                    y, m, d = date.split("-")
+                    date = f"{m}/{d}/{y}"
+
+                    with st.expander(f"{parsed_email['Subject']}  —  {sender}  —  {date}"):
                         st.write(f"**From:** {parsed_email['From']}")
                         st.write(f"**Subject:** {parsed_email['Subject']}")
                         st.write(f"**Date:** {parsed_email['Date']}")
