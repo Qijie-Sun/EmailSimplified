@@ -104,17 +104,20 @@ def main():
                     sender = parsed_email['From']
                     if isinstance(sender, list) and sender:
                         sender = sender[0][0] or sender[0][1]
-
-                    date = str(parsed_email['Date']).split()[0]
-                    y, m, d = date.split("-")
-                    date = f"{m}/{d}/{y}"
+                    sender_limit = 20
+                    if len(sender) > sender_limit:
+                        sender = sender[:sender_limit - 3] + "..."
 
                     subject = parsed_email['Subject'] or "(No Subject)"
                     subject_limit = 40
                     if len(subject) > subject_limit:
                         subject = subject[:subject_limit - 3] + "..."
 
-                    with st.expander(f"{subject}  —  {sender}  —  {date}"):
+                    date = str(parsed_email['Date']).split()[0]
+                    y, m, d = date.split("-")
+                    date = f"{m}/{d}/{y}"
+
+                    with st.expander(f"{sender} — {subject} — {date}"):
                         st.write(f"**From:** {parsed_email['From']}")
                         st.write(f"**Subject:** {parsed_email['Subject']}")
                         st.write(f"**Date:** {parsed_email['Date']}")
