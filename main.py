@@ -8,9 +8,9 @@ import streamlit as st
 st.markdown(
     """
     <style>
-    div[data-testid="InputInstructions"] > span:nth-child(1) {
-        visibility: hidden;
-    }
+        div[data-testid="InputInstructions"] > span:nth-child(1) {
+            visibility: hidden;
+        }
     </style>
     """,
     unsafe_allow_html=True
@@ -109,7 +109,12 @@ def main():
                     y, m, d = date.split("-")
                     date = f"{m}/{d}/{y}"
 
-                    with st.expander(f"{parsed_email['Subject']}  —  {sender}  —  {date}"):
+                    subject = parsed_email['Subject'] or "(No Subject)"
+                    subject_limit = 40
+                    if len(subject) > subject_limit:
+                        subject = subject[:subject_limit - 3] + "..."
+
+                    with st.expander(f"{subject}  —  {sender}  —  {date}"):
                         st.write(f"**From:** {parsed_email['From']}")
                         st.write(f"**Subject:** {parsed_email['Subject']}")
                         st.write(f"**Date:** {parsed_email['Date']}")
