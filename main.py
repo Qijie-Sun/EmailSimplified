@@ -94,38 +94,37 @@ def main():
         }
 
         category = st.selectbox("Select Gmail category", list(category_options.keys()))
-        num_emails = st.slider("Number of emails to fetch", min_value=1, max_value=10, value=3)
+        num_emails = st.slider("Number of emails to fetch", min_value=1, max_value=50, value=10)
 
-        if st.button("Fetch Emails"):
-            email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
-            if email_ids:
-                st.success(f"Fetched {len(email_ids)} emails.")
-                for id in reversed(email_ids):
-                    parsed_email = parse(st.session_state.imap, id)
+        email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
+        if email_ids:
+            st.success(f"Fetched {len(email_ids)} emails.")
+            for id in reversed(email_ids):
+                parsed_email = parse(st.session_state.imap, id)
                     
-                    sender = parsed_email['From']
-                    if isinstance(sender, list) and sender:
-                        sender = sender[0][0] or sender[0][1]
-                    sender_limit = 20
-                    if len(sender) > sender_limit:
-                        sender = sender[:sender_limit - 3] + "..."
+                sender = parsed_email['From']
+                if isinstance(sender, list) and sender:
+                    sender = sender[0][0] or sender[0][1]
+                sender_limit = 20
+                if len(sender) > sender_limit:
+                    sender = sender[:sender_limit - 3] + "..."
 
-                    subject = parsed_email['Subject'] or "(No Subject)"
-                    subject_limit = 40
-                    if len(subject) > subject_limit:
-                        subject = subject[:subject_limit - 3] + "..."
+                subject = parsed_email['Subject'] or "(No Subject)"
+                subject_limit = 40
+                if len(subject) > subject_limit:
+                    subject = subject[:subject_limit - 3] + "..."
 
-                    date = str(parsed_email['Date']).split()[0]
-                    y, m, d = date.split("-")
-                    date = f"{m}/{d}/{y}"
+                date = str(parsed_email['Date']).split()[0]
+                y, m, d = date.split("-")
+                date = f"{m}/{d}/{y}"
 
-                    with st.expander(f"{sender} — {subject} — {date}"):
-                        st.write(f"**From:** {parsed_email['From']}")
-                        st.write(f"**Subject:** {parsed_email['Subject']}")
-                        st.write(f"**Date:** {parsed_email['Date']}")
-                        st.markdown(parsed_email['Content'])
-            else:
-                st.info("No emails found.")
+                with st.expander(f"{sender} — {subject} — {date}"):
+                    st.write(f"**From:** {parsed_email['From']}")
+                    st.write(f"**Subject:** {parsed_email['Subject']}")
+                    st.write(f"**Date:** {parsed_email['Date']}")
+                    st.markdown(parsed_email['Content'])
+        else:
+            st.info("No emails found.")
 
 if __name__ == "__main__":
     main()
