@@ -7,3 +7,13 @@ This program aims to create a simplified version of Gmail that shows more concis
 - Basic user login
 - Email text extraction from gmail
 - Dropdowns for emails
+
+## Requirements
+- Python 3.10+
+- Libraries:
+  - imaplib
+  - mailparser
+  - getpass
+  - lxml
+  - streamlit
+
