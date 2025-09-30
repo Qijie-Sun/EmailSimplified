@@ -4,17 +4,10 @@ import mailparser
 from lxml import html
 import streamlit as st
 
-# Hide "Press Enter to apply" text on inputs
-st.markdown(
-    """
-    <style>
-        div[data-testid="InputInstructions"] > span:nth-child(1) {
-            visibility: hidden;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+def load_css(file_path="styles.css"):
+    with open(file_path) as f:
+        css = f.read()
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 def login(email, password):
     imap = imaplib.IMAP4_SSL('imap.gmail.com')
@@ -64,6 +57,7 @@ def parse(imap, id):
 
 # streamlit run main.py
 def main():
+    load_css()
     st.title("Gmail Reader")
 
     if "imap" not in st.session_state:
