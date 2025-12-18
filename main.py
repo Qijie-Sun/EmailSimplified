@@ -88,7 +88,7 @@ def main():
         }
 
         category = st.selectbox("Select Gmail category", list(category_options.keys()))
-        num_emails = st.slider("Number of emails to fetch", min_value=1, max_value=50, value=10)
+        num_emails = st.select_slider("Number of emails to fetch", options=[10, 20, 30, 40, 50], value=20)
 
         email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
         if email_ids:
