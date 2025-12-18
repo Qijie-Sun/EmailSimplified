@@ -58,7 +58,7 @@ def parse(imap, id):
 # streamlit run main.py
 def main():
     load_css()
-    st.title("Gmail Reader")
+    st.title("Email Simplified")
 
     if "imap" not in st.session_state:
         st.session_state.imap = None
