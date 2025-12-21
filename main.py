@@ -105,8 +105,11 @@ def main():
             "Updates": "updates"
         }
 
-        category = st.selectbox("Select Gmail category", list(category_options.keys()))
-        num_emails = st.select_slider("Number of emails to fetch", options=[10, 20, 30, 40, 50], value=20)
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            category = st.selectbox("Select Gmail category", list(category_options.keys()))
+        with col2:
+            num_emails = st.selectbox("Emails",options=[10, 20, 50, 100], index=1)
 
         email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
         if email_ids:
