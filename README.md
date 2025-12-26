@@ -1,11 +1,12 @@
 # EmailSimplified
 This project is currently in early development.
 
-This program aims to create a simplified version of Gmail that shows more concise content and groups similar emails together using natural language processing.
+This program aims to create a simplified version of Gmail that shows more concise content and shows groups of similar emails using natural language processing.
 
 ## Features
-- Basic user login
-- Email text extraction from gmail
+- User login
+- Email text extraction from Gmail
+- Email category and number selection
 - Dropdowns for emails
 
 ## Requirements
@@ -13,7 +14,7 @@ This program aims to create a simplified version of Gmail that shows more concis
 - Libraries:
   - imaplib
   - mailparser
-  - getpass
   - lxml
   - streamlit
+  - concurrent.futures
 

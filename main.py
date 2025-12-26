@@ -1,5 +1,4 @@
 import imaplib
-import getpass
 import mailparser
 from lxml import html
 import streamlit as st
@@ -93,10 +92,6 @@ def main():
                 st.session_state.imap = login(st.session_state.email, st.session_state.password)
                 st.rerun()
     else:
-        if st.button('Logout'):
-            st.session_state.imap = None
-            st.rerun()
-
         category_options = {
             "All": "",
             "Primary": "primary",
@@ -105,11 +100,16 @@ def main():
             "Updates": "updates"
         }
 
-        col1, col2 = st.columns([3, 1])
+        col1, col2, col3, col4 = st.columns([2, 1, 1, 2])
         with col1:
-            category = st.selectbox("Select Gmail category", list(category_options.keys()))
+            category = st.selectbox("Category", list(category_options.keys()))
         with col2:
-            num_emails = st.selectbox("Emails",options=[10, 20, 50, 100], index=1)
+            num_emails = st.selectbox("Number",options=[10, 20, 50, 100], index=1)
+        with col3:
+            st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
+            if st.button('Logout'):
+                st.session_state.imap = None
+                st.rerun()
 
         email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
         if email_ids:
@@ -123,7 +123,7 @@ def main():
                     sender = sender[:sender_limit - 3] + "..."
 
                 subject = parsed_email['Subject'] or "(No Subject)"
-                subject_limit = 40
+                subject_limit = 50
                 if len(subject) > subject_limit:
                     subject = subject[:subject_limit - 3] + "..."
 
