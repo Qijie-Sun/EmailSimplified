@@ -74,6 +74,7 @@ def parse(imap, ids):
 
 # streamlit run main.py
 def main():
+    st.set_page_config(layout="wide")
     load_css()
     st.title("Email Simplified")
 
@@ -92,52 +93,57 @@ def main():
                 st.session_state.imap = login(st.session_state.email, st.session_state.password)
                 st.rerun()
     else:
-        category_options = {
-            "All": "",
-            "Primary": "primary",
-            "Promotions": "promotions",
-            "Social": "social",
-            "Updates": "updates"
-        }
+        themes_col, main_col = st.columns([1, 4])
+        with themes_col:
+            st.markdown("### Themes")
+            st.markdown("Temporary")
+        with main_col:
+            category_options = {
+                "All": "",
+                "Primary": "primary",
+                "Promotions": "promotions",
+                "Social": "social",
+                "Updates": "updates"
+            }
 
-        col1, col2, col3, col4 = st.columns([2, 1, 1, 2])
-        with col1:
-            category = st.selectbox("Category", list(category_options.keys()))
-        with col2:
-            num_emails = st.selectbox("Number",options=[10, 20, 50, 100], index=1)
-        with col3:
-            st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
-            if st.button('Logout'):
-                st.session_state.imap = None
-                st.rerun()
+            col1, col2, col3, col4 = st.columns([2, 1, 1, 2])
+            with col1:
+                category = st.selectbox("Category", list(category_options.keys()))
+            with col2:
+                num_emails = st.selectbox("Number",options=[10, 20, 50, 100], index=1)
+            with col3:
+                st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
+                if st.button('Logout'):
+                    st.session_state.imap = None
+                    st.rerun()
 
-        email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
-        if email_ids:
-            parsed_emails = parse(st.session_state.imap, email_ids)
-            for parsed_email in reversed(parsed_emails):
-                sender = parsed_email['From']
-                if isinstance(sender, list) and sender:
-                    sender = sender[0][0] or sender[0][1]
-                sender_limit = 20
-                if len(sender) > sender_limit:
-                    sender = sender[:sender_limit - 3] + "..."
+            email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
+            if email_ids:
+                parsed_emails = parse(st.session_state.imap, email_ids)
+                for parsed_email in reversed(parsed_emails):
+                    sender = parsed_email['From']
+                    if isinstance(sender, list) and sender:
+                        sender = sender[0][0] or sender[0][1]
+                    sender_limit = 20
+                    if len(sender) > sender_limit:
+                        sender = sender[:sender_limit - 3] + "..."
 
-                subject = parsed_email['Subject'] or "(No Subject)"
-                subject_limit = 50
-                if len(subject) > subject_limit:
-                    subject = subject[:subject_limit - 3] + "..."
+                    subject = parsed_email['Subject'] or "(No Subject)"
+                    subject_limit = 50
+                    if len(subject) > subject_limit:
+                        subject = subject[:subject_limit - 3] + "..."
 
-                date = str(parsed_email['Date']).split()[0]
-                y, m, d = date.split("-")
-                date = f"{m}/{d}/{y}"
+                    date = str(parsed_email['Date']).split()[0]
+                    y, m, d = date.split("-")
+                    date = f"{m}/{d}/{y}"
 
-                with st.expander(f"{sender} — {subject} — {date}"):
-                    st.write(f"**From:** {parsed_email['From']}")
-                    st.write(f"**Subject:** {parsed_email['Subject']}")
-                    st.write(f"**Date:** {parsed_email['Date']}")
-                    st.markdown(parsed_email['Content'])
-        else:
-            st.info("No emails found.")
+                    with st.expander(f"{sender} — {subject} — {date}"):
+                        st.write(f"**From:** {parsed_email['From']}")
+                        st.write(f"**Subject:** {parsed_email['Subject']}")
+                        st.write(f"**Date:** {parsed_email['Date']}")
+                        st.markdown(parsed_email['Content'])
+            else:
+                st.info("No emails found.")
 
 if __name__ == "__main__":
     main()
