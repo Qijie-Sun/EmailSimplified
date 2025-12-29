@@ -106,14 +106,14 @@ def main():
                 "Updates": "updates"
             }
 
-            col1, col2, col3, col4 = st.columns([2, 1, 1, 2])
+            col1, col2, col3, col4 = st.columns([2, 1, 4, 1])
             with col1:
                 category = st.selectbox("Category", list(category_options.keys()))
             with col2:
                 num_emails = st.selectbox("Number",options=[10, 20, 50, 100], index=1)
-            with col3:
+            with col4:
                 st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
-                if st.button('Logout'):
+                if st.button('Logout', use_container_width=True):
                     st.session_state.imap = None
                     st.rerun()
 
@@ -129,7 +129,7 @@ def main():
                         sender = sender[:sender_limit - 3] + "..."
 
                     subject = parsed_email['Subject'] or "(No Subject)"
-                    subject_limit = 50
+                    subject_limit = 80
                     if len(subject) > subject_limit:
                         subject = subject[:subject_limit - 3] + "..."
 
@@ -137,7 +137,13 @@ def main():
                     y, m, d = date.split("-")
                     date = f"{m}/{d}/{y}"
 
-                    with st.expander(f"{sender} — {subject} — {date}"):
+                    col_5, col_6 = st.columns([9, 1])
+                    with col_5:
+                        st.markdown(f"**{sender}** — {subject}")
+                    with col_6:
+                        st.markdown(f"{date}")
+
+                    with st.expander("Contents"):
                         st.write(f"**From:** {parsed_email['From']}")
                         st.write(f"**Subject:** {parsed_email['Subject']}")
                         st.write(f"**Date:** {parsed_email['Date']}")
