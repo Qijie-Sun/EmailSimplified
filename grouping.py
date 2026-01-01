@@ -19,7 +19,6 @@ THEME_KEYWORDS = {
     ]
 }
 
-
 def classify_email(email):
     text = f"{email.get('Subject', '')} {email.get('Content', '')}".lower()
 

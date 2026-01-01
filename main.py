@@ -104,6 +104,7 @@ def main():
         "Updates": "updates"
     }
 
+    # TODO: clean up column formattings
     col1, col2, col3, col4 = st.columns([2, 1, 4, 1])
     with col1:
         category = st.selectbox("Category", list(category_options.keys()))
