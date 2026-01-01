@@ -4,6 +4,8 @@ from lxml import html
 import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
 
+import grouping
+
 def load_css(file_path="styles.css"):
     with open(file_path) as f:
         css = f.read()
