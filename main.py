@@ -85,14 +85,18 @@ def main():
         st.session_state.password = ""
 
     if not st.session_state.imap:
-        st.session_state.email = st.text_input("Enter Gmail address", value=st.session_state.email)
-        st.session_state.password = st.text_input("Enter app password", type="password")
-        if st.button("Login"):
-            if not st.session_state.email or not st.session_state.password:
-                st.error("Please enter both email and password")
-            else:
-                st.session_state.imap = login(st.session_state.email, st.session_state.password)
-                st.rerun()
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            st.markdown("<div style='height: 3rem;'></div>", unsafe_allow_html=True)
+            st.session_state.email = st.text_input("Enter Gmail address", value=st.session_state.email)
+            st.session_state.password = st.text_input("Enter app password", type="password")
+            st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
+            if st.button("Login", use_container_width=True):
+                if not st.session_state.email or not st.session_state.password:
+                    st.error("Please enter both email and password")
+                else:
+                    st.session_state.imap = login(st.session_state.email, st.session_state.password)
+                    st.rerun()
         return
     
     category_options = {
@@ -105,7 +109,7 @@ def main():
 
     col0, col1, col2, col3, col4 = st.columns([2, 2, 1, 4, 1])
     with col0:
-        st.markdown("### Logo Placeholder")
+        st.markdown("### Placeholder")
     with col1:
         category = st.selectbox("Category", list(category_options.keys()))
     with col2:
