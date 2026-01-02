@@ -2,3 +2,7 @@
 div[data-testid="InputInstructions"] > span:nth-child(1) {
     visibility: hidden;
 }
+
+.block-container {
+    padding-top: 4rem;
+}

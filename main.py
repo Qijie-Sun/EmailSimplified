@@ -78,7 +78,6 @@ def parse(imap, ids):
 def main():
     st.set_page_config(layout="wide")
     load_css()
-    st.title("Email Simplified")
 
     if "imap" not in st.session_state:
         st.session_state.imap = None
@@ -104,8 +103,9 @@ def main():
         "Updates": "updates"
     }
 
-    # TODO: clean up column formattings
-    col1, col2, col3, col4 = st.columns([2, 1, 4, 1])
+    col0, col1, col2, col3, col4 = st.columns([2, 2, 1, 4, 1])
+    with col0:
+        st.markdown("### Logo Placeholder")
     with col1:
         category = st.selectbox("Category", list(category_options.keys()))
     with col2:
