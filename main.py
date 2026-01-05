@@ -6,11 +6,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 import grouping
 
+# Load css file
 def load_css(file_path="styles.css"):
-    with open(file_path) as f:
-        css = f.read()
+    with open(file_path) as css_file:
+        css = css_file.read()
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
+# Login to Gmail IMAP
 def login(email, password):
     imap = imaplib.IMAP4_SSL('imap.gmail.com')
     try:
@@ -21,6 +23,7 @@ def login(email, password):
         exit()
     return imap
 
+# Fetch most recent "limit" email IDs from a category
 def fetch_emails(imap, category, limit):
     status, messages = imap.search(None, 'X-GM-RAW', 'category:' + category)
     if status != 'OK':
@@ -29,6 +32,7 @@ def fetch_emails(imap, category, limit):
     email_ids = messages[0].split()
     return email_ids[-limit:]
 
+# Strip styles and return plain text
 def extract_visible_text(html_content):
     tree = html.fromstring(html_content)
     html.etree.strip_elements(tree, 'script', 'style', 'head', 'title', 'meta', with_tail=False)
@@ -37,6 +41,7 @@ def extract_visible_text(html_content):
     chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
     return '\n'.join(chunk for chunk in chunks if chunk)
 
+# Extract details of emails
 def parse(imap, ids):
     if isinstance(ids, (list, tuple)):
         id_bytes = b','.join(ids)
@@ -74,7 +79,7 @@ def parse(imap, ids):
 
     return parse_single(raw_emails[0])
 
-# streamlit run main.py
+# Main function (streamlit run main.py)
 def main():
     st.set_page_config(layout="wide")
     load_css()
@@ -107,14 +112,14 @@ def main():
         "Updates": "updates"
     }
 
-    col0, col1, col2, col3, col4 = st.columns([2, 2, 1, 4, 1])
-    with col0:
-        st.markdown("### Placeholder")
+    col1, col2, col3, col4, col5 = st.columns([2, 2, 1, 4, 1])
     with col1:
-        category = st.selectbox("Category", list(category_options.keys()))
+        st.markdown("### Placeholder")
     with col2:
+        category = st.selectbox("Category", list(category_options.keys()))
+    with col3:
         num_emails = st.selectbox("Number",options=[10, 20, 50, 100], index=1)
-    with col4:
+    with col5:
         st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
         if st.button('Logout', use_container_width=True):
             st.session_state.imap = None
@@ -127,8 +132,8 @@ def main():
     else:
         st.info("No emails found.")
 
-    themes_col, main_col = st.columns([1, 4])
-    with themes_col:
+    col1, col2 = st.columns([1, 4])
+    with col1:
         st.markdown("### Themes")
         theme_options = ["All"] + list(grouped_emails.keys())
 
@@ -137,7 +142,7 @@ def main():
             theme_options,
             label_visibility="collapsed",
         )
-    with main_col:
+    with col2:
         if selected_theme != "All":
             parsed_emails = grouped_emails.get(selected_theme, [])
         for parsed_email in reversed(parsed_emails):
