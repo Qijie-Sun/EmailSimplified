@@ -90,8 +90,8 @@ def main():
         st.session_state.password = ""
 
     if not st.session_state.imap:
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col2:
+        left_col, login_col, right_col = st.columns([1, 1, 1])
+        with login_col:
             st.markdown("<div style='height: 3rem;'></div>", unsafe_allow_html=True)
             st.session_state.email = st.text_input("Enter Gmail address", value=st.session_state.email)
             st.session_state.password = st.text_input("Enter app password", type="password")
@@ -112,14 +112,14 @@ def main():
         "Updates": "updates"
     }
 
-    col1, col2, col3, col4, col5 = st.columns([2, 2, 1, 4, 1])
-    with col1:
+    placeholder_col, category_col, number_col, space_col, logout_col = st.columns([2, 2, 1, 4, 1])
+    with placeholder_col:
         st.markdown("### Placeholder")
-    with col2:
+    with category_col:
         category = st.selectbox("Category", list(category_options.keys()))
-    with col3:
+    with number_col:
         num_emails = st.selectbox("Number",options=[10, 20, 50, 100], index=1)
-    with col5:
+    with logout_col:
         st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
         if st.button('Logout', use_container_width=True):
             st.session_state.imap = None
@@ -128,12 +128,14 @@ def main():
     email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
     if email_ids:
         parsed_emails = parse(st.session_state.imap, email_ids)
-        grouped_emails = grouping.group_emails_by_theme(parsed_emails)
+        embeddings = grouping.embed_emails(parsed_emails)
+        labels = grouping.cluster_embeddings(embeddings)
+        grouped_emails = grouping.group_emails_by_cluster(parsed_emails, labels)
     else:
         st.info("No emails found.")
 
-    col1, col2 = st.columns([1, 4])
-    with col1:
+    themes_col, main_col = st.columns([1, 4])
+    with themes_col:
         st.markdown("### Themes")
         theme_options = ["All"] + list(grouped_emails.keys())
 
@@ -142,7 +144,7 @@ def main():
             theme_options,
             label_visibility="collapsed",
         )
-    with col2:
+    with main_col:
         if selected_theme != "All":
             parsed_emails = grouped_emails.get(selected_theme, [])
         for parsed_email in reversed(parsed_emails):
@@ -162,17 +164,15 @@ def main():
             y, m, d = date.split("-")
             date = f"{m}/{d}/{y}"
 
-            col_5, col_6 = st.columns([9, 1])
-            with col_5:
-                st.markdown(f"**{sender}** — {subject}")
-            with col_6:
+            email_col, date_col = st.columns([9, 1])
+            with email_col:
+                with st.expander(f"**{sender}** — {subject}"):
+                    st.write(f"**From:** {parsed_email['From']}")
+                    st.write(f"**Subject:** {parsed_email['Subject']}")
+                    st.write(f"**Date:** {parsed_email['Date']}")
+                    st.markdown(parsed_email['Content'])
+            with date_col:
                 st.markdown(f"{date}")
-
-            with st.expander("Contents"):
-                st.write(f"**From:** {parsed_email['From']}")
-                st.write(f"**Subject:** {parsed_email['Subject']}")
-                st.write(f"**Date:** {parsed_email['Date']}")
-                st.markdown(parsed_email['Content'])
 
 if __name__ == "__main__":
     main()

@@ -1,39 +1,33 @@
+from sentence_transformers import SentenceTransformer
+import numpy as np
+import hdbscan
 from collections import defaultdict
-import re
 
-THEMES = [
-    "Shopping",
-    "Finance",
-    "Social"
-]
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
-THEME_KEYWORDS = {
-    "Shopping": [
-        "order", "receipt", "shipping", "delivery", "purchase", "invoice"
-    ],
-    "Finance": [
-        "bank", "statement", "payment", "credit", "debit", "balance"
-    ],
-    "Social": [
-        "friend", "follower", "liked", "commented", "mentioned"
-    ]
-}
+def email_to_text(email):
+    return f"{email.get('Subject', '')} {email.get('Content', '')}".strip()
 
-def classify_email(email):
-    text = f"{email.get('Subject', '')} {email.get('Content', '')}".lower()
+def embed_emails(emails):
+    texts = [email_to_text(e) for e in emails]
+    embeddings = model.encode(texts, normalize_embeddings=True)
+    return np.array(embeddings)
 
-    for theme, keywords in THEME_KEYWORDS.items():
-        for kw in keywords:
-            if re.search(rf"\b{re.escape(kw)}\b", text):
-                return theme
+def cluster_embeddings(embeddings, min_cluster_size=3, min_samples=1):
+    clusterer = hdbscan.HDBSCAN(
+        min_cluster_size=min_cluster_size,
+        metric='euclidean',
+        cluster_selection_method='eom'
+    )
+    
+    labels = clusterer.fit_predict(embeddings)
+    return labels
 
-    return "Other"
-
-def group_emails_by_theme(emails):
+def group_emails_by_cluster(emails, labels):
     grouped = defaultdict(list)
-
-    for email in emails:
-        theme = classify_email(email)
-        grouped[theme].append(email)
-
+    
+    for email, label in zip(emails, labels):
+        cluster_name = f"Cluster_{label}" if label != -1 else "Other"
+        grouped[cluster_name].append(email)
+    
     return grouped
