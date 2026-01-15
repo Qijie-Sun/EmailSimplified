@@ -1,11 +1,11 @@
 # EmailSimplified
-This program aims to create a simplified version of Gmail that shows more concise content and shows groupings of similar emails using natural language processing.
+EmailSimplified is a simplified version of Gmail that shows more concise content and shows groupings of similar emails using natural language processing.
 
 ## Features
-- Email text extraction from Gmail
+- Email extraction from existing Gmail
 - Email category and number selection
 - Dropdowns for emails
-- Basic theme selection
+- Theme selection
 
 ## Requirements
 - Python 3.10+
@@ -15,4 +15,7 @@ This program aims to create a simplified version of Gmail that shows more concis
   - lxml
   - streamlit
   - concurrent.futures
+  - sentence_transformers
+  - numpy
+  - hdbscan
 
