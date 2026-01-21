@@ -31,16 +31,16 @@ def generate_cluster_names(embeddings, emails, labels):
     names = {}
     for label in set(labels):
         if label == -1:
-            names[label] = "Other"
+            names[label] = 'Other'
             continue
 
         idxs = np.where(labels == label)[0]
         centroid = embeddings[idxs].mean(axis=0)
         closest = idxs[np.argmax(embeddings[idxs] @ centroid)]
-        names[label] = emails[closest].get("Subject")
+        names[label] = emails[closest].get('Subject')
     return names
 
-# Group emails into clusters
+# Group emails by their clusters
 def group_emails_by_cluster(embeddings, emails, labels):
     names = generate_cluster_names(embeddings, emails, labels)
     groups = defaultdict(list)
