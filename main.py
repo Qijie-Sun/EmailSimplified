@@ -130,7 +130,7 @@ def main():
         parsed_emails = parse(st.session_state.imap, email_ids)
         embeddings = grouping.embed_emails(parsed_emails)
         labels = grouping.cluster_embeddings(embeddings)
-        grouped_emails = grouping.group_emails_by_cluster(parsed_emails, labels)
+        grouped_emails = grouping.group_emails_by_cluster(embeddings, parsed_emails, labels)
     else:
         st.info('No emails found.')
 

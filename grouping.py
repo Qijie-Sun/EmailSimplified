@@ -26,11 +26,25 @@ def cluster_embeddings(embeddings, min_cluster_size=3):
     labels = clusterer.fit_predict(embeddings)
     return labels
 
+# Generate cluster names (replace with LLM generation later)
+def generate_cluster_names(embeddings, emails, labels):
+    names = {}
+    for label in set(labels):
+        if label == -1:
+            names[label] = "Other"
+            continue
+
+        idxs = np.where(labels == label)[0]
+        centroid = embeddings[idxs].mean(axis=0)
+        closest = idxs[np.argmax(embeddings[idxs] @ centroid)]
+        names[label] = emails[closest].get("Subject")
+    return names
+
 # Group emails into clusters
-def group_emails_by_cluster(emails, labels):
+def group_emails_by_cluster(embeddings, emails, labels):
+    names = generate_cluster_names(embeddings, emails, labels)
     groups = defaultdict(list)
 
     for email, label in zip(emails, labels):
-        cluster_name = f"Cluster_{label}" if label != -1 else "Other"
-        groups[cluster_name].append(email)
+        groups[names[label]].append(email)
     return groups
