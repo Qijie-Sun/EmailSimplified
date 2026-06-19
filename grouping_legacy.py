@@ -26,7 +26,7 @@ def cluster_embeddings(embeddings, min_cluster_size=3):
     labels = clusterer.fit_predict(embeddings)
     return labels
 
-# Generate cluster names (replace with LLM generation later)
+# Generate cluster names (replace with LLM generation with Qwen3.5-2B)
 def generate_cluster_names(embeddings, emails, labels):
     names = {}
     for label in set(labels):

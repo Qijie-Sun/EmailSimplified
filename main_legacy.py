@@ -1,0 +1,180 @@
+import imaplib
+import mailparser
+from lxml import html
+import streamlit as st
+from concurrent.futures import ThreadPoolExecutor
+
+import grouping_legacy
+
+# Load css file
+def load_css(file_path='styles.css'):
+    with open(file_path) as css_file:
+        css = css_file.read()
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+
+# Login to Gmail IMAP
+def login(email, password):
+    imap = imaplib.IMAP4_SSL('imap.gmail.com')
+    try:
+        imap.login(email, password)
+        imap.select('inbox')
+    except imaplib.IMAP4.error:
+        st.error('Login failed. Please check your credentials.')
+        exit()
+    return imap
+
+# Fetch most recent "limit" email IDs from a category
+def fetch_emails(imap, category, limit):
+    status, messages = imap.search(None, 'X-GM-RAW', 'category:' + category)
+    if status != 'OK':
+        st.error('Failed to retrieve emails.')
+        return []
+    email_ids = messages[0].split()
+    return email_ids[-limit:]
+
+# Strip styles and return plain text
+def extract_visible_text(html_content):
+    tree = html.fromstring(html_content)
+    html.etree.strip_elements(tree, 'script', 'style', 'head', 'title', 'meta', with_tail=False)
+    text = tree.text_content()
+    lines = (line.strip() for line in text.splitlines())
+    chunks = (phrase.strip() for line in lines for phrase in line.split('  '))
+    return '\n'.join(chunk for chunk in chunks if chunk)
+
+# Extract details of emails
+def parse(imap, ids):
+    if isinstance(ids, (list, tuple)):
+        id_bytes = b','.join(ids)
+        batch = True
+    else:
+        id_bytes = ids
+        batch = False
+    status, msg_data = imap.fetch(id_bytes, '(RFC822)')
+    raw_emails = []
+    for i in range(0, len(msg_data), 2):
+        if isinstance(msg_data[i], tuple):
+            raw_emails.append(msg_data[i][1])
+
+    def parse_single(raw_email):
+        parsed = mailparser.parse_from_bytes(raw_email)
+
+        if parsed.text_plain:
+            clean_text = '\n'.join(parsed.text_plain)
+        elif parsed.text_html:
+            html_content = '\n'.join(parsed.text_html)
+            clean_text = extract_visible_text(html_content)
+        else:
+            clean_text = '[No readable content found]'
+
+        return {
+            'From': parsed.from_,
+            'Subject': parsed.subject,
+            'Date': parsed.date,
+            'Content': clean_text
+        }
+
+    if batch:
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            return list(executor.map(parse_single, raw_emails))
+
+    return parse_single(raw_emails[0])
+
+# Main function (streamlit run main.py)
+def main():
+    st.set_page_config(layout='wide')
+    load_css()
+
+    if 'imap' not in st.session_state:
+        st.session_state.imap = None
+        st.session_state.email = ''
+        st.session_state.password = ''
+
+    if not st.session_state.imap:
+        left_col, login_col, right_col = st.columns([1, 1, 1])
+        with login_col:
+            st.markdown("<div style='height: 3rem;'></div>", unsafe_allow_html=True)
+            st.session_state.email = st.text_input('Enter Gmail address', value=st.session_state.email)
+            st.session_state.password = st.text_input('Enter app password', type='password')
+            st.markdown("<div style='height: 0.75rem;'></div>", unsafe_allow_html=True)
+            if st.button('Login', use_container_width=True):
+                if not st.session_state.email or not st.session_state.password:
+                    st.error('Please enter both email and password')
+                else:
+                    st.session_state.imap = login(st.session_state.email, st.session_state.password)
+                    st.rerun()
+        return
+    
+    category_options = {
+        'All': '',
+        'Primary': 'primary',
+        'Promotions': 'promotions',
+        'Social': 'social',
+        'Updates': 'updates'
+    }
+
+    placeholder_col, category_col, number_col, space_col, logout_col = st.columns([2, 2, 1, 4, 1])
+    with placeholder_col:
+        st.markdown('### Placeholder')
+    with category_col:
+        category = st.selectbox('Category', list(category_options.keys()))
+    with number_col:
+        num_emails = st.selectbox('Number',options=[10, 20, 50, 100], index=1)
+    with logout_col:
+        st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
+        if st.button('Logout', use_container_width=True):
+            st.session_state.imap = None
+            st.rerun()
+
+    email_ids = fetch_emails(st.session_state.imap, category_options[category], num_emails)
+    if email_ids:
+        parsed_emails = parse(st.session_state.imap, email_ids)
+        embeddings = grouping_legacy.embed_emails(parsed_emails)
+        labels = grouping_legacy.cluster_embeddings(embeddings)
+        grouped_emails = grouping_legacy.group_emails_by_cluster(embeddings, parsed_emails, labels)
+    else:
+        st.info('No emails found.')
+
+    themes_col, main_col = st.columns([1, 4])
+    with themes_col:
+        st.markdown('### Themes')
+        themes = list(grouped_emails.keys())
+        themes = sorted(t for t in themes if t != 'Other')
+        theme_options = ['All'] + themes + (['Other'] if 'Other' in grouped_emails else [])
+
+        selected_theme = st.radio(
+            'Email Groups',
+            theme_options,
+            label_visibility='collapsed',
+        )
+    with main_col:
+        if selected_theme != 'All':
+            parsed_emails = grouped_emails.get(selected_theme, [])
+        for parsed_email in reversed(parsed_emails):
+            sender = parsed_email['From'][:30]
+            if isinstance(sender, list) and sender:
+                sender = sender[0][0] or sender[0][1]
+            sender_limit = 20
+            if len(sender) > sender_limit:
+                sender = sender[:sender_limit - 3] + '...'
+
+            subject = parsed_email['Subject'] or '(No Subject)'
+            subject_limit = 80
+            if len(subject) > subject_limit:
+                subject = subject[:subject_limit - 3] + '...'
+
+            date = str(parsed_email['Date']).split()[0]
+            y, m, d = date.split('-')
+            date = f'{m}/{d}/{y}'
+
+            email_col, date_col = st.columns([9, 1])
+            with email_col:
+                with st.expander(f'**{sender}** — {subject}'):
+                    st.write(f'**From:** {parsed_email['From']}')
+                    st.write(f'**Subject:** {parsed_email['Subject']}')
+                    st.write(f'**Date:** {parsed_email['Date']}')
+                    st.markdown(parsed_email['Content'])
+            with date_col:
+                st.markdown(f'{date}')
+
+if __name__ == '__main__':
+    main()
