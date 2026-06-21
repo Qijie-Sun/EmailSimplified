@@ -13,6 +13,6 @@ class Client:
             self.imap.login(self.email, self.password)
             self.imap.select('inbox')
         except imaplib.IMAP4.error:
-            st.error('Login failed. Please check your credentials.')
-            exit()
+            st.error('Invalid email or password')
+            return None
         return self

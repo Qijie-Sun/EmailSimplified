@@ -7,16 +7,11 @@ def load_css(path='styles\styles.css') -> None:
     with open(path) as css_file:
         st.markdown(f'<style>{css_file.read()}</style>', unsafe_allow_html=True)
 
-# Set session states
-def init_session() -> None:
-    st.session_state.setdefault("client", None)
-    st.session_state.setdefault("email", "")
-
 # Main
 def main() -> None:
     st.set_page_config(layout="wide")
     load_css()
-    init_session()
+    st.session_state.setdefault("client", None)
 
     if st.session_state.client:
         main_page()
