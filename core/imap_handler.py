@@ -16,3 +16,11 @@ class Client:
             st.error('Invalid email or password')
             return None
         return self
+    
+    def fetch_email_ids(self, category, limit):
+        status, messages = self.imap.search(None, 'X-GM-RAW', 'category:' + category)
+        if status != 'OK':
+            st.error('Failed to retrieve emails.')
+            return []
+        email_ids = messages[0].split()
+        return email_ids[-limit:]

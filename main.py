@@ -3,7 +3,7 @@ from ui.main_page import main_page
 from ui.login_page import login_page
 
 # Load CSS file
-def load_css(path='styles\styles.css') -> None:
+def load_css(path='styles\\styles.css') -> None:
     with open(path) as css_file:
         st.markdown(f'<style>{css_file.read()}</style>', unsafe_allow_html=True)
 
