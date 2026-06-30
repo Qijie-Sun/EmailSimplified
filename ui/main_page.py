@@ -83,6 +83,6 @@ def main_page() -> None:
         st.markdown("#### Selected Emails")
         selected = st.session_state.get("selected_email")
         if selected:
-            st.write(selected.sender)
+            st.text(selected.sender_and_address)
             st.write(selected.subject)
             st.write(selected.content)
