@@ -18,4 +18,3 @@ EmailSimplified is a simplified version of Gmail that shows more concise content
   - sentence_transformers
   - numpy
   - hdbscan
-

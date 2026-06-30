@@ -15,7 +15,11 @@ def parse(imap, id):
     status, msg_data = imap.fetch(id, '(RFC822)')
     if status != 'OK':
         return None
-    parsed = mailparser.parse_from_bytes(msg_data)
+    parsed = None
+    for data in msg_data:
+        if isinstance(data, tuple):
+            parsed = mailparser.parse_from_bytes(data[1])
+            break
 
     if parsed.text_plain:
         clean_text = '\n'.join(parsed.text_plain)
