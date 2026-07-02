@@ -62,3 +62,15 @@ div[class*="st-key-email_card_"] div[data-testid="stButton"] button {
     opacity: 0;
     cursor: pointer;
 }
+
+div[class*="st-key-email_list_scroll"],
+div[class*="st-key-selected_email_scroll"] {
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    display: block;
+    padding-right: 10px;
+}
+
+div[class*="st-key-email_list_scroll"] > div[data-testid="stVerticalBlock"] {
+    gap: 0.1rem;
+}
