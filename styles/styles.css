@@ -3,8 +3,19 @@ div[data-testid='InputInstructions'] > span:nth-child(1) {
     visibility: hidden;
 }
 
+/* Prevent scrolling on main page */
 [data-testid='stMain'] {
     overflow: hidden;
+}
+
+/* Hide Streamlit header */
+[data-testid="stHeader"] {
+    display: none;
+}
+
+/* Remove padding used for Streamlit header */
+[data-testid="stMainBlockContainer"] {
+    padding-top: 0;
 }
 
 :root {

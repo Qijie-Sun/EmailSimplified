@@ -4,7 +4,7 @@ from core.imap_handler import Client
 def login_page() -> None:
     _, center, _ = st.columns([1, 1, 1])
     with center:
-        st.markdown("<div style='height: 3rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 8rem;'></div>", unsafe_allow_html=True)
 
         with st.form('login_form'):
             email = st.text_input('Enter Gmail address')
