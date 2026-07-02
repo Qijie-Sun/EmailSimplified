@@ -1,9 +1,9 @@
 /* Hide "Press Enter to apply" text on inputs */
-div[data-testid="InputInstructions"] > span:nth-child(1) {
+div[data-testid='InputInstructions'] > span:nth-child(1) {
     visibility: hidden;
 }
 
-[data-testid="stMain"] {
+[data-testid='stMain'] {
     overflow: hidden;
 }
 
@@ -11,22 +11,22 @@ div[data-testid="InputInstructions"] > span:nth-child(1) {
     --email-card-height: 60px;
 }
 
-div[class*="st-key-email_card_"] .email-card {
+div[class*='st-key-email_card_'] .email-card {
     padding: 8px 12px;
     border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.04);
     pointer-events: none;
 }
 
-div[class*="st-key-email_card_"] .email-row {
+div[class*='st-key-email_card_'] .email-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: 10px;
 }
 
-div[class*="st-key-email_card_"] .email-sender,
-div[class*="st-key-email_card_"] .email-subject {
+div[class*='st-key-email_card_'] .email-sender,
+div[class*='st-key-email_card_'] .email-subject {
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
@@ -35,17 +35,17 @@ div[class*="st-key-email_card_"] .email-subject {
     text-align: left;
 }
 
-div[class*="st-key-email_card_"] .email-sender {
+div[class*='st-key-email_card_'] .email-sender {
     font-weight: 600;
 }
 
-div[class*="st-key-email_card_"] .email-subject {
+div[class*='st-key-email_card_'] .email-subject {
     font-size: 0.85em;
     opacity: 0.75;
 }
 
-div[class*="st-key-email_card_"] .email-date,
-div[class*="st-key-email_card_"] .email-time {
+div[class*='st-key-email_card_'] .email-date,
+div[class*='st-key-email_card_'] .email-time {
     flex: 0 0 auto;
     white-space: nowrap;
     text-align: right;
@@ -53,24 +53,24 @@ div[class*="st-key-email_card_"] .email-time {
     opacity: 0.7;
 }
 
-div[class*="st-key-email_card_"] div[data-testid="stButton"] {
+div[class*='st-key-email_card_'] div[data-testid='stButton'] {
     margin-top: calc(-1 * var(--email-card-height));
 }
 
-div[class*="st-key-email_card_"] div[data-testid="stButton"] button {
+div[class*='st-key-email_card_'] div[data-testid='stButton'] button {
     height: var(--email-card-height);
     opacity: 0;
     cursor: pointer;
 }
 
-div[class*="st-key-email_list_scroll"],
-div[class*="st-key-selected_email_scroll"] {
+div[class*='st-key-email_list_scroll'],
+div[class*='st-key-selected_email_scroll'] {
     max-height: calc(100vh - 220px);
     overflow-y: auto;
     display: block;
     padding-right: 10px;
 }
 
-div[class*="st-key-email_list_scroll"] > div[data-testid="stVerticalBlock"] {
+div[class*='st-key-email_list_scroll'] > div[data-testid='stVerticalBlock'] {
     gap: 0.1rem;
 }

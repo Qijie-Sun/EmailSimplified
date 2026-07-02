@@ -66,23 +66,23 @@ def main_page() -> None:
 
     left_col, separator_col, right_col = st.columns([3, 0.05, 7])
     with left_col:
-        st.markdown("#### Themes")
+        st.markdown('<div style="font-size: 1rem; font-weight: 400;">Themes</div>', unsafe_allow_html=True)
+        st.write('theme1')
         horizontal_separator()
-        st.markdown("#### Emails")
-        with st.container(key="email_list_scroll"):
+        with st.container(key='email_list_scroll'):
             emails = get_emails(category_options[category], num_emails)
             for i, email in enumerate(emails):
-                with st.container(key=f"email_card_{i}"):
+                with st.container(key=f'email_card_{i}'):
                     render_email_card(email)
-                    if st.button("", key=f"email_select_{i}", use_container_width=True):
+                    if st.button('', key=f'email_select_{i}', use_container_width=True):
                         st.session_state.selected_email = email
                         st.rerun()
     with separator_col:
         vertical_separator()
     with right_col:
-        st.markdown("#### Selected Emails")
-        with st.container(key="selected_email_scroll"):
-            selected = st.session_state.get("selected_email")
+        st.markdown('<div style="font-size: 1rem; font-weight: 400;">Selected</div>', unsafe_allow_html=True)
+        with st.container(key='selected_email_scroll'):
+            selected = st.session_state.get('selected_email')
             if selected:
                 st.text(selected.sender_and_address)
                 st.write(selected.subject)

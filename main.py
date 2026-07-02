@@ -9,14 +9,14 @@ def load_css(path='styles\\styles.css') -> None:
 
 # Main
 def main() -> None:
-    st.set_page_config(layout="wide")
+    st.set_page_config(layout='wide')
     load_css()
-    st.session_state.setdefault("client", None)
+    st.session_state.setdefault('client', None)
 
     if st.session_state.client:
         main_page()
     else:
         login_page()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
