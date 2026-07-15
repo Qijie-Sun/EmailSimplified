@@ -21,10 +21,14 @@ def parse(imap, id):
             parsed = mailparser.parse_from_bytes(data[1])
             break
 
+    if parsed.text_html:
+        html_content = '\n'.join(parsed.text_html)
+    else:
+        html_content = ''
+
     if parsed.text_plain:
         clean_text = '\n'.join(parsed.text_plain)
-    elif parsed.text_html:
-        html_content = '\n'.join(parsed.text_html)
+    elif html_content:
         clean_text = extract_visible_text(html_content)
     else:
         clean_text = '[No readable content found]'
@@ -33,5 +37,6 @@ def parse(imap, id):
         'From': parsed.from_,
         'Subject': parsed.subject,
         'Date': parsed.date,
-        'Content': clean_text
+        'Content': clean_text,
+        'HTML': html_content
     }

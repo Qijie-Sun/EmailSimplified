@@ -80,10 +80,12 @@ def main_page() -> None:
     with separator_col:
         vertical_separator()
     with right_col:
-        st.markdown('<div style="font-size: 1rem; font-weight: 400;">Selected</div>', unsafe_allow_html=True)
         with st.container(key='selected_email_scroll'):
             selected = st.session_state.get('selected_email')
             if selected:
-                st.text(selected.sender_and_address)
-                st.write(selected.subject)
-                st.write(selected.content)
+                st.text('Sender: ' + selected.sender_and_address)
+                st.text('Subject: ' + selected.subject)
+                if selected.html_content:
+                    st.html(selected.html_content)
+                else:
+                    st.text(selected.content)

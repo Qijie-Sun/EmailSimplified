@@ -9,7 +9,8 @@ class Email:
     address: str
     subject: str
     date: Optional[datetime]
-    content: str = ""
+    content: str = ''
+    html_content: str = ''
 
     @property
     def sender_and_address(self) -> str:
@@ -33,7 +34,8 @@ class Email:
             address=address or '',
             subject=data.get('Subject') or '(No subject)',
             date=data.get('Date'),
-            content=data.get('Content', '')
+            content=data.get('Content', ''),
+            html_content=data.get("HTML", "")
         )
 
     @staticmethod
