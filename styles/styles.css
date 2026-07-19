@@ -18,10 +18,12 @@ div[data-testid='InputInstructions'] > span:nth-child(1) {
     padding-top: 0;
 }
 
+/* Store email card height */
 :root {
     --email-card-height: 60px;
 }
 
+/* Style email card container */
 div[class*='st-key-email_card_'] .email-card {
     padding: 8px 12px;
     border-radius: 8px;
@@ -29,6 +31,7 @@ div[class*='st-key-email_card_'] .email-card {
     pointer-events: none;
 }
 
+/* Arrange email row contents horizontally */
 div[class*='st-key-email_card_'] .email-row {
     display: flex;
     justify-content: space-between;
@@ -36,8 +39,10 @@ div[class*='st-key-email_card_'] .email-row {
     gap: 10px;
 }
 
-div[class*='st-key-email_card_'] .email-sender,
-div[class*='st-key-email_card_'] .email-subject {
+/* Style sender text */
+div[class*='st-key-email_card_'] .email-sender {
+    font-weight: 600;
+    font-size: 0.85em;
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
@@ -46,15 +51,20 @@ div[class*='st-key-email_card_'] .email-subject {
     text-align: left;
 }
 
-div[class*='st-key-email_card_'] .email-sender {
-    font-weight: 600;
-}
-
+/* Style subject text */
 div[class*='st-key-email_card_'] .email-subject {
     font-size: 0.85em;
     opacity: 0.75;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: calc(100% - 70px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
 }
 
+/* Style date and time text */
 div[class*='st-key-email_card_'] .email-date,
 div[class*='st-key-email_card_'] .email-time {
     flex: 0 0 auto;
@@ -64,16 +74,19 @@ div[class*='st-key-email_card_'] .email-time {
     opacity: 0.7;
 }
 
+/* Position invisible button over email card */
 div[class*='st-key-email_card_'] div[data-testid='stButton'] {
     margin-top: calc(-1 * var(--email-card-height));
 }
 
+/* Make email card button invisible */
 div[class*='st-key-email_card_'] div[data-testid='stButton'] button {
     height: var(--email-card-height);
     opacity: 0;
     cursor: pointer;
 }
 
+/* Make email list scrollable */
 div[class*='st-key-email_list_scroll'] {
     max-height: calc(100vh - 220px);
     overflow-y: auto;
@@ -81,12 +94,14 @@ div[class*='st-key-email_list_scroll'] {
     padding-right: 10px;
 }
 
+/* Make selected email view scrollable */
 div[class*='st-key-selected_email_scroll'] {
     max-height: calc(100vh - 140px);
     overflow-y: auto;
     display: block;
 }
 
+/* Reduce spacing between email cards */
 div[class*='st-key-email_list_scroll'] > div[data-testid='stVerticalBlock'] {
     gap: 0.1rem;
 }
