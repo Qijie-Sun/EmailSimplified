@@ -64,11 +64,11 @@ def main_page() -> None:
             st.rerun()
     horizontal_separator()
 
+    st.markdown('<div style="font-size: 1rem; font-weight: 400; margin-bottom:12px;">Themes:</div>', unsafe_allow_html=True)
+    horizontal_separator()
+
     left_col, separator_col, right_col = st.columns([3, 0.05, 7])
     with left_col:
-        st.markdown('<div style="font-size: 1rem; font-weight: 400;">Themes</div>', unsafe_allow_html=True)
-        st.write('theme1')
-        horizontal_separator()
         with st.container(key='email_list_scroll'):
             emails = get_emails(category_options[category], num_emails)
             for i, email in enumerate(emails):

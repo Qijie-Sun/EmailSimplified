@@ -88,7 +88,7 @@ div[class*='st-key-email_card_'] div[data-testid='stButton'] button {
 
 /* Make email list scrollable */
 div[class*='st-key-email_list_scroll'] {
-    max-height: calc(100vh - 220px);
+    max-height: calc(100vh - 190px);
     overflow-y: auto;
     display: block;
     padding-right: 10px;
@@ -96,7 +96,7 @@ div[class*='st-key-email_list_scroll'] {
 
 /* Make selected email view scrollable */
 div[class*='st-key-selected_email_scroll'] {
-    max-height: calc(100vh - 140px);
+    max-height: calc(100vh - 190px);
     overflow-y: auto;
     display: block;
 }

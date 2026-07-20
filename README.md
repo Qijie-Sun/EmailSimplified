@@ -1,11 +1,12 @@
 # EmailSimplified
-EmailSimplified is a simplified version of Gmail that shows more concise content and shows groupings of similar emails using natural language processing.
+EmailSimplified is a simplified version of Gmail that enables users to 
+check emails using a clean UI and 
+categorizes similar emails using natural language processing.
 
 ## Features
-- Email extraction from existing Gmail
-- Email category and number selection
-- Dropdowns for emails
-- Theme selection
+- Email extraction from existing Gmail account
+- Email category and number filters
+- Email theme selection
 
 ## Requirements
 - Python 3.10+
