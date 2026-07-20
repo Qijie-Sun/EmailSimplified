@@ -23,12 +23,17 @@ div[data-testid='InputInstructions'] > span:nth-child(1) {
     --email-card-height: 60px;
 }
 
-/* Style email card container */
+/* Style email card */
 div[class*='st-key-email_card_'] .email-card {
     padding: 8px 12px;
     border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.04);
     pointer-events: none;
+}
+
+/* Style selected email card */
+div[class*='st-key-email_card_'] .email-card.selected {
+    background-color: rgba(255,255,255,0.12);
 }
 
 /* Arrange email row contents horizontally */

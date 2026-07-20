@@ -18,11 +18,12 @@ def horizontal_separator() -> None:
 def vertical_separator() -> None:
     st.markdown('<div style="border-left:1px solid grey; height:100vh;"></div>', unsafe_allow_html=True)
 
-def render_email_card(email: Email) -> None:
+def render_email_card(email: Email, selected: bool = False) -> None:
     sender = html.escape(email.sender)
     subject = html.escape(email.subject)
+    card_class = 'email-card' if not selected else 'email-card selected'
     st.markdown(f"""
-        <div class="email-card">
+        <div class="{card_class}">
             <div class="email-row">
                 <span class="email-sender">{sender}</span>
                 <span class="email-date">{email.formatted_date}</span>
@@ -52,6 +53,7 @@ def get_emails(category: str, limit: int) -> list[Email]:
 def main_page() -> None:
     category_col, number_col, search_col, logout_col = st.columns([2, 1, 6, 1])
     with category_col:
+        # TODO: category box should not allow typing
         category = st.selectbox('Category', list(category_options.keys()))
     with number_col:
         num_emails = st.number_input('Number', min_value=1, max_value=1000, value=10)
@@ -71,11 +73,13 @@ def main_page() -> None:
     with left_col:
         with st.container(key='email_list_scroll'):
             emails = get_emails(category_options[category], num_emails)
+            selected_index = st.session_state.get('selected_email_index')
             for i, email in enumerate(emails):
                 with st.container(key=f'email_card_{i}'):
-                    render_email_card(email)
+                    render_email_card(email, selected=(i == selected_index))
                     if st.button('', key=f'email_select_{i}', use_container_width=True):
                         st.session_state.selected_email = email
+                        st.session_state.selected_email_index = i
                         st.rerun()
     with separator_col:
         vertical_separator()
