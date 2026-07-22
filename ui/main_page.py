@@ -2,7 +2,7 @@ import streamlit as st
 import html
 from datetime import datetime
 from core.email import Email
-from core.parser import parse
+from core.parse import parse
 
 category_options = {
     'All': '',
@@ -53,7 +53,6 @@ def get_emails(category: str, limit: int) -> list[Email]:
 def main_page() -> None:
     category_col, number_col, search_col, logout_col = st.columns([2, 1, 6, 1])
     with category_col:
-        # TODO: category box should not allow typing
         category = st.selectbox('Category', list(category_options.keys()))
     with number_col:
         num_emails = st.number_input('Number', min_value=1, max_value=1000, value=10)
